@@ -98,7 +98,7 @@ end
 
 def join
   visit '/games'
-  click_on "Play!"
+  click_button "Play!"
 end
 
 ### GIVEN ###
@@ -128,10 +128,6 @@ Given /^a finished game which I played before exists$/ do
 	set_played
 end
 
-Given /^a finished game which I never played before exists$/ do
-	create_finished_game
-end
-
 Given /^I am a whoop winner$/ do
 	set_whoop_winner
 end
@@ -157,7 +153,7 @@ When /^I play the game$/ do
 end
 
 When /^I want to know more about the game$/ do
-	click_link "More about"
+	click_link "More about " + @game[:game_name]
 end
 
 When /^I get a new card$/ do
@@ -176,7 +172,7 @@ When /^I get a new non-whoop card$/ do
 end
 
 When /^I press the more info of the game$/ do
-	click_on "More about"
+	click_on "More about " + @game[:game_name]
 end
 
 ### THEN ###
@@ -207,7 +203,7 @@ Then /^I should see the status of the game$/ do
 end
 
 Then /^I should see the more info of the game$/ do
-  page.should have_content "More about"
+  page.should have_content "More about " + @game[:game_name]
 end
 
 Then /^I should not see the name of the game$/ do

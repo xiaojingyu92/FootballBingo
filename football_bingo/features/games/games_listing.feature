@@ -34,11 +34,6 @@ Scenario: I cannot see a game I never play in my profile
   When I follow "Profile"
   Then I should not see the name of the game
 
-Scenario: I cannot check the play history of a finished game I never played before
-  Given a finished game which I never played before exists
-  When I am on the games page
-  Then I should not see "Check play history"
-
 Scenario: I can see a game I played in my profile
   Given an ongoing game which I played before exists
   When I follow "Profile"
@@ -63,7 +58,7 @@ Scenario: An upcoming game
 Scenario: A finished game
   Given a finished game which I played before exists
   When I follow "Profile"
-  And I follow "Check play history"
+  And I press "Check play history"
   Then I should not see "Get a new card!"
 
 Scenario: A finished game

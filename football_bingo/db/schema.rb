@@ -88,7 +88,7 @@ ActiveRecord::Schema.define(version: 2019_04_21_033333) do
 
   create_table "games", force: :cascade do |t|
     t.string "game_name"
-    t.date "date"
+    t.datetime "date"
     t.integer "notify_by_email"
     t.string "source"
     t.string "version"

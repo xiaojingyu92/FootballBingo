@@ -1,3 +1,3 @@
 When /^I send the email$/ do
-	click_on 'Send'
+	click_button 'Send'
 end
