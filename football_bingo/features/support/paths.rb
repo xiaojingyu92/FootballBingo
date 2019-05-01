@@ -12,19 +12,24 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-    
+    when /^the admin page$/ then '/admin/'
     when /^the score board page$/ then '/score_board'
-    
+    when /^the help page$/ then '/help'
+    when /^the log in page$/ then '/login'
+    when /^the sign up page$/ then '/signup'
     when /^the home page$/ then '/#home'
-
+    when /^the users page$/ then '/users'
+    when /^the game play page$/ then '/game_play'
+    when /^the profile page for "(.*)"$/
+      user_id = User.find_by(name: $1).id
+      user_path(user_id)
     when /^the edit page for "(.*)"$/
-        movie_id = Movie.find_by(title: $1).id
-        edit_movie_path(movie_id)
-    when /^the details page for "(.*)"$/  
-        movie = Movie.find_by(title: $1)
-        movie_path(movie)
-    when /^the Similar Movies page for "(.*)"$/    
-        search_same_director_path($1)
+      user_id = User.find_by(name: $1).id
+      edit_user_path(user_id)
+    when /^the send page$/ then '/send_email'
+    when /^the games page$/ then '/games'
+
+
 
     else
       begin

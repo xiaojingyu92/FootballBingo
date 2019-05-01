@@ -17,14 +17,6 @@ body {
   padding-top: 60px;
 }
 
-section {
-  overflow: auto;
-}
-
-textarea {
-  resize: vertical;
-}
-
 .center {
   text-align: center;
   h1 {
@@ -165,4 +157,20 @@ input {
   .form-control {
     color: $state-danger-text;
   }
+}
+
+/* bingo card */
+.bingotrue {
+  background-color: #BA8888 !important;
+}
+.bingofalse {
+  background-color: none !important;
+}
+
+.maroon{
+  background-color: #500000;
+}
+
+.btn-primary{
+  background-color: #500000;
 }

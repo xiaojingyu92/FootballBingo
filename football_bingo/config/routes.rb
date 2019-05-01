@@ -1,14 +1,31 @@
 Rails.application.routes.draw do
 
-  get  '/help',    to: 'static_pages#help'
-  get  '/signup',  to: 'users#new'
-  post '/signup',  to: 'users#create'
-  get  '/share',  to: 'users#share'
-  get    '/login',   to: 'sessions#new'
-  post   '/login',   to: 'sessions#create'
-  delete '/logout',  to: 'sessions#destroy'
-  get '/score_board', to: :score_board, controller: 'games'
-  resources :users
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  get  '/help' => 'static_pages#help'
+  get  '/signup' => 'users#new'
+  post '/signup' => 'users#create'
+
+  get    '/login' => 'sessions#new'
+  post   '/login' => 'sessions#create'
+  delete '/logout' => 'sessions#destroy'
+  get '/score_board' => 'games#score_board'
+  post '/send_email' => 'games#send_email'
+  post '/games' => :show, controller: 'games'
+
+  resources :users do
+    get '/share' => 'users#share'
+    resources :games do
+      get '/play' => 'games#play_game'
+      post '/join' => 'games#join'
+      post '/get_new_card' => 'games#get_new_card'
+      post '/get_whoop_card' => 'games#get_whoop_card'
+      post '/check_win' => 'users#check_win'
+    end
+  end
+
   root 'static_pages#home'
   #root 'users#index'
+  resources :games do
+
+  end
 end

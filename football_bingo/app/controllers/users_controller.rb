@@ -1,18 +1,25 @@
 class UsersController < ApplicationController
-  #before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :logged_in_user, only: [:edit, :update]
-  before_action :correct_user,   only: [:edit, :update]
-
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:edit, :update, :show, :share, :check_win]
+  before_action :correct_user, only: [:edit, :update, :show]
+  before_action :admin_user, only: [:index, :destroy]
   # GET /users
   # GET /users.json
   def index
     @users = User.all
+
   end
 
   # GET /users/1
   # GET /users/1.json
   def show
-    @user = User.find(params[:id])
+    # HARDCODED GAME
+    @game_path = 'XML/tam.xml'
+    #game_helper_load
+
+    @cards = Card.where(user_id: @user.id)
+    # show_user_cards
+    render 'show'
   end
 
   # GET /users/new
@@ -22,7 +29,11 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @user = User.find(params[:id])
+  end
+
+  # GET /users/1/share
+  def share
+    render 'share'
   end
 
   # POST /users
@@ -33,12 +44,12 @@ class UsersController < ApplicationController
     if @user.save
       # log in after sign up
       log_in @user
-      flash[:success] = "Welcome to the Sample App!"
+      flash[:success] = "Welcome to the FootballBingo App!"
       redirect_to @user
     else
       render 'new'
     end
-    
+
     # respond_to do |format|
     #   if @user.save
     #     format.html { redirect_to @user, notice: 'User was successfully created.' }
@@ -65,19 +76,32 @@ class UsersController < ApplicationController
   end
 
   # DELETE /users/1
-  # DELETE /users/1.json
   def destroy
+    # @user = User.find(params[:id])
     @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
+    flash[:success] = "User was successfully destroyed."
+    redirect_to users_url
+  end
+
+  def check_win
+    # @user = User.find(session[:user_id])
+    @user = current_user
+    @gus = playing_games(@user).first
+    if !@gus.nil?
+        game = @gus.game
+        @cards = Card.where(:user_id => @user.id, :game_id => game.id)
+        win_card_num = check_states_winner_rule
+        if win_card_num > 0
+          gu = GameUser.where(:user_id => @user.id, :game => game.id).first
+          gu.update(:state => "whoop_winner")
+          gu.update(:whoops => win_card_num)
+          flash[:success] = "Whoop! You are the winner! Go to check score board!"
+        else
+          flash[:warning] = "Not yet. Good luck is on your way!"
+        end
     end
+    redirect_to @user
   end
-  
-  def share
-    render 'share'
-  end
-  
 
   private
     def set_user
@@ -87,7 +111,7 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
-    
+
     def logged_in_user
       unless logged_in?
         store_location
@@ -95,9 +119,13 @@ class UsersController < ApplicationController
         redirect_to login_url
       end
     end
-    
+
     def correct_user
       @user = User.find(params[:id])
       redirect_to(root_url) unless current_user?(@user)
+    end
+
+    def admin_user
+      redirect_to(root_url) unless current_user.role == "admin"
     end
 end
